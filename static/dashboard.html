@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Broadcast Layer: Operations</title>
+<style>
+  :root{--bg:#0E1416;--panel:#161E22;--line:#243036;--text:#E8EEF0;--dim:#7C8B92;
+    --onair:#E5484D;--live:#30A46C;--amber:#F5A623;--accent:#4CC2FF;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,sans-serif}
+  .bar{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--panel)}
+  .brand{font-family:"Barlow Condensed",system-ui;font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:15px}
+  .clock{margin-left:auto;font-family:"IBM Plex Mono",monospace;color:var(--accent);font-size:14px}
+  main{max-width:1100px;margin:0 auto;padding:24px 20px}
+  h1{font-family:"Barlow Condensed",system-ui;font-weight:600;font-size:22px;letter-spacing:.02em;margin:0 0 4px}
+  .sub{color:var(--dim);font-size:13px;margin-bottom:20px}
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);padding:8px 10px;border-bottom:1px solid var(--line)}
+  td{padding:12px 10px;border-bottom:1px solid #1a2226;font-size:14px}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:12px;padding:3px 9px;border-radius:999px}
+  .live{background:rgba(48,163,108,.15);color:var(--live)}
+  .nosrc{background:rgba(229,72,77,.15);color:var(--onair)}
+  .dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+  .live .dot{animation:pulse 1.4s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  .kind{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--dim)}
+  .num{font-family:"IBM Plex Mono",monospace;color:var(--accent)}
+  .empty{color:var(--dim);padding:40px 10px;text-align:center}
+  @media (prefers-reduced-motion:reduce){.live .dot{animation:none}}
+</style></head>
+<body>
+<div class="bar"><span class="brand">Broadcast Layer &middot; Operations</span>
+  <span class="clock" id="clock">--:--:--</span></div>
+<main>
+  <h1>Live tracks</h1>
+  <p class="sub">Every access track, its active source, and health. Refreshes every second.</p>
+  <table><thead><tr>
+    <th>Track</th><th>Status</th><th>Active source</th><th>Sources</th>
+    <th>Cues / min</th><th>Total</th><th>Handoffs</th>
+  </tr></thead><tbody id="rows">
+    <tr><td colspan="7" class="empty">No live tracks. Start one from the captioner console.</td></tr>
+  </tbody></table>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+function tick(){ $('clock').textContent = new Date().toLocaleTimeString('en-GB'); }
+setInterval(tick, 1000); tick();
+async function refresh(){
+  try{
+    const d = await (await fetch('/v1/dashboard')).json();
+    if(!d.tracks.length){ return; }
+    $('rows').innerHTML = d.tracks.map(t => `
+      <tr>
+        <td>${t.track}<div class="kind">${t.modality}</div></td>
+        <td><span class="pill ${t.status==='LIVE'?'live':'nosrc'}"><span class="dot"></span>${t.status}</span></td>
+        <td>${t.active_source||'&mdash;'}<div class="kind">${t.active_role||''} ${t.active_kind==='ai'?'&middot; AI backstop':''}</div></td>
+        <td class="num">${t.healthy_sources}/${t.sources}</td>
+        <td class="num">${t.cues_last_min}</td>
+        <td class="num">${t.total_cues}</td>
+        <td class="num">${t.handoffs}</td>
+      </tr>`).join('');
+  }catch(e){}
+}
+setInterval(refresh, 1000); refresh();
+</script>
+</body></html>

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Broadcast Layer: Player demo</title>
+<style>
+  :root{--bg:#0E1416;--panel:#161E22;--line:#243036;--text:#E8EEF0;--dim:#7C8B92;--accent:#4CC2FF;--amber:#F5A623;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,sans-serif}
+  .bar{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--panel)}
+  .brand{font-family:"Barlow Condensed",system-ui;font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:15px}
+  main{max-width:860px;margin:0 auto;padding:24px 20px}
+  .stage{position:relative;background:#000;border:1px solid var(--line);border-radius:12px;aspect-ratio:16/9;overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .placeholder{color:#33454d;font-family:"Barlow Condensed",system-ui;font-size:44px;letter-spacing:.1em;text-transform:uppercase}
+  .caption{position:absolute;left:0;right:0;bottom:26px;text-align:center;padding:0 40px}
+  .caption span{display:inline;background:rgba(0,0,0,.82);color:#fff;font-size:26px;line-height:1.35;padding:4px 12px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+  .row{display:flex;gap:10px;align-items:end;margin:18px 0 10px}
+  label{display:block;font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+  input{background:#0b1113;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-family:"IBM Plex Mono",monospace}
+  button{background:var(--accent);color:#04141c;border:none;border-radius:8px;padding:11px 18px;font-weight:700;cursor:pointer}
+  .meta{font-size:12px;color:var(--dim);font-family:"IBM Plex Mono",monospace}
+  .meta .ai{color:var(--amber)}
+</style></head>
+<body>
+<div class="bar"><span class="brand">Broadcast Layer &middot; Player</span></div>
+<main>
+  <div class="stage">
+    <div class="placeholder">SAMPLE STREAM</div>
+    <div class="caption"><span id="cap" style="display:none"></span></div>
+  </div>
+  <div class="row">
+    <div style="flex:1"><label>Track id to watch</label>
+      <input id="tid" placeholder="trk_..." style="width:100%"></div>
+    <button id="watch">Watch captions</button>
+  </div>
+  <p class="meta" id="meta">Enter a track id from the captioner console, then watch live captions ride the stream.</p>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+let ws=null, hide=null;
+$('watch').onclick = () => {
+  const tid = $('tid').value.trim(); if(!tid) return;
+  if(ws) ws.close();
+  ws = new WebSocket(`${location.protocol==='https:'?'wss':'ws'}://${location.host}/v1/tracks/${tid}/subscribe`);
+  ws.onopen = () => $('meta').textContent = 'Connected. Waiting for cues...';
+  ws.onmessage = ev => {
+    const c = JSON.parse(ev.data); if(!c.text) return;
+    const cap = $('cap'); cap.textContent = c.text; cap.style.display='inline';
+    $('meta').innerHTML = `cue ${c.seq} &middot; ${c.source_kind==='ai'?'<span class="ai">AI backstop</span>':'human'} &middot; ${c.source_role}`;
+    clearTimeout(hide);
+    hide = setTimeout(()=>{ cap.style.display='none'; }, Math.max(1500, c.end_ms-c.start_ms));
+  };
+  ws.onclose = () => $('meta').textContent = 'Disconnected.';
+};
+</script>
+</body></html>

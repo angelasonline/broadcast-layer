@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Broadcast Layer</title>
+<style>
+  :root{--bg:#0E1416;--panel:#161E22;--line:#243036;--text:#E8EEF0;--dim:#7C8B92;
+    --onair:#E5484D;--live:#30A46C;--amber:#F5A623;--accent:#4CC2FF;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;line-height:1.6}
+  .bar{display:flex;align-items:center;gap:12px;padding:16px 22px;border-bottom:1px solid var(--line)}
+  .tally{width:12px;height:12px;border-radius:50%;background:var(--onair);box-shadow:0 0 10px var(--onair)}
+  .brand{font-family:"Barlow Condensed",system-ui;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+  nav{margin-left:auto;display:flex;gap:22px;font-size:14px}
+  nav a{color:var(--dim);text-decoration:none}nav a:hover{color:var(--text)}
+  .hero{max-width:900px;margin:0 auto;padding:64px 22px 40px}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--accent);letter-spacing:.06em;margin-bottom:18px}
+  h1{font-family:"Barlow Condensed",system-ui;font-weight:700;font-size:clamp(40px,7vw,74px);line-height:1.02;letter-spacing:.01em;margin:0 0 20px}
+  h1 em{color:var(--amber);font-style:normal}
+  .lede{font-size:20px;color:#c4d0d4;max-width:660px}
+  .grid{max-width:900px;margin:0 auto;padding:20px 22px 70px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .cell{background:var(--panel);padding:22px}
+  .cell h3{font-family:"Barlow Condensed",system-ui;font-weight:600;font-size:19px;margin:0 0 8px;letter-spacing:.02em}
+  .cell p{font-size:14px;color:var(--dim);margin:0}
+  .cta{max-width:900px;margin:0 auto 70px;padding:0 22px;display:flex;gap:12px;flex-wrap:wrap}
+  .btn{background:var(--live);color:#04140c;text-decoration:none;padding:13px 22px;border-radius:8px;font-weight:700}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+  footer{border-top:1px solid var(--line);padding:22px;text-align:center;color:var(--dim);font-size:13px}
+</style></head>
+<body>
+<div class="bar"><span class="tally"></span><span class="brand">Broadcast Layer</span>
+  <nav><a href="/caption">Captioner</a><a href="/dashboard">Operations</a><a href="/player">Player demo</a></nav></div>
+<div class="hero">
+  <div class="eyebrow">ACCESS AS BROADCAST INFRASTRUCTURE</div>
+  <h1>Captions and sign language,<br>delivered <em>like the signal itself.</em></h1>
+  <p class="lede">Broadcast Layer turns real-time access into infrastructure: human captioners and interpreters feeding standards-compliant tracks, with redundant sources, honest failover, and a signed compliance record for every cue. Captions and ASL are equals, not afterthoughts.</p>
+</div>
+<div class="grid">
+  <div class="cell"><h3>Peer tracks</h3><p>Captions and sign language are first-class tracks in the same model. Neither is bolted on.</p></div>
+  <div class="cell"><h3>Redundant sources</h3><p>Primary human, hot standby, and an AI backstop. Seamless handoff, never a blank track.</p></div>
+  <div class="cell"><h3>Standards output</h3><p>WebVTT and TTML plus a live feed. Any broadcast or streaming pipeline can ingest a track.</p></div>
+  <div class="cell"><h3>Signed for compliance</h3><p>Every cue carries a signed receipt. Export a per-broadcast record for regulators.</p></div>
+  <div class="cell"><h3>Human-led by design</h3><p>The human is the standard; automation is the backstop, always labeled for what it is.</p></div>
+  <div class="cell"><h3>Runs where you need it</h3><p>Cloud, your VPC, or on-prem. Content is not persisted beyond the live broadcast.</p></div>
+</div>
+<div class="cta">
+  <a class="btn" href="/caption">Open captioner console</a>
+  <a class="btn ghost" href="/dashboard">View operations</a>
+</div>
+<footer>Access to language is a human right. The infrastructure that delivers it should be open, resilient, and standards-based.</footer>
+</body></html>
